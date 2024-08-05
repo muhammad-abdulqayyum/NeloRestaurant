@@ -2,6 +2,7 @@ package com.example.nelorestaurant.controller;
 
 import com.example.nelorestaurant.model.Reservation;
 import com.example.nelorestaurant.model.Restaurant;
+import com.example.nelorestaurant.model.Table;
 import com.example.nelorestaurant.request.ReservationRequest;
 import com.example.nelorestaurant.service.NeloService;
 import org.slf4j.Logger;
@@ -10,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,10 +28,26 @@ public class NeloController {
     NeloService neloService;
 
     @PostMapping("/search")
-    public ResponseEntity<List<Restaurant>> findAvailableRestaurantTables(@RequestBody ReservationRequest request){
+    public ResponseEntity<List<Table>> findAvailableRestaurantTables(@RequestBody ReservationRequest request){
+
+        int groupSize = request.getGroupSize();
+        LocalDateTime requestTime = request.getTime();
+        List<String> dietaryRestrictions = request.getDietaryRestrictions();
 
 
-        return ResponseEntity.ok(null);
+        try{
+            List<Table> matchingTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
+
+            if(matchingTables != null && !matchingTables.isEmpty()){
+                return ResponseEntity.ok(matchingTables);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
     @PostMapping("/createReservation")
