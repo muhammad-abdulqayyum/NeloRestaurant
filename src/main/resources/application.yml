@@ -1,0 +1,40 @@
+# Spring Boot application configuration
+spring:
+  # General application settings
+  application:
+    name: NeloRestaurant
+
+  # Data source configuration for Oracle database
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:xe  # Example URL for Oracle database
+    username: your-username  # Replace with your database username
+    password: your-password  # Replace with your database password
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  # JDBC settings
+  jdbc:
+  # Optionally configure connection pool settings
+  # For example:
+  # initialize:
+  #   mode: always
+
+  # JPA configuration (if you use JPA/Hibernate)
+  jpa:
+    hibernate:
+      ddl-auto: update  # Automatically create/update database schema
+    show-sql: true  # Show SQL queries in the console
+
+  # Server settings
+  server:
+    port: 8080  # Port on which the application runs
+
+  # Logging settings
+  logging:
+    level:
+      root: INFO  # Log level for root logger
+      com.example: DEBUG  # Log level for specific package
+
+# Custom application properties (if needed)
+custom:
+  property1: value1
+  property2: value2
