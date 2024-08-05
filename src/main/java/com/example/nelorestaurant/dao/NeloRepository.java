@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class NeloDAO {
+public class NeloRepository {
 
     public static final String DELETE_RESERVATION_VIA_ID = "DELETE FROM reservations WHERE id = ?";
 

@@ -43,7 +43,7 @@ public class NeloController {
 
             if(deleteSuccessful){
                 log.info("Reservation successfully deleted");
-                return ResponseEntity.ok("Reservation ID: " + reservationId + " sucessfully deleted");
+                return ResponseEntity.ok("Reservation ID: " + reservationId + " successfully deleted");
             } else {
                 return ResponseEntity.notFound().build();
             }

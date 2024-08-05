@@ -1,6 +1,6 @@
 package com.example.nelorestaurant.service;
 
-import com.example.nelorestaurant.dao.NeloDAO;
+import com.example.nelorestaurant.dao.NeloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class NeloService {
 
     @Autowired
-    NeloDAO repository;
+    NeloRepository repository;
 
     public boolean deleteReservation(int reservationId){
         return repository.deleteReservation(reservationId);
