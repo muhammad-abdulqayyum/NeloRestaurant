@@ -10,4 +10,9 @@ public class NeloService {
     @Autowired
     NeloDAO repository;
 
+    public boolean deleteReservation(int reservationId){
+        return repository.deleteReservation(reservationId);
+    }
+
+
 }
