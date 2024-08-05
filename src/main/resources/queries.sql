@@ -1,3 +1,15 @@
+CREATE TABLE diners (
+                        id BIGSERIAL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        dietary_restrictions JSON
+);
+
+CREATE TABLE restaurants (
+                             id BIGSERIAL PRIMARY KEY,
+                             name VARCHAR(255) NOT NULL,
+                             endorsements JSON
+);
+
 CREATE TABLE tables (
                         id BIGSERIAL PRIMARY KEY,
                         restaurant_id BIGINT REFERENCES restaurants(id),
@@ -40,6 +52,13 @@ VALUES
     ('Jill', '["Vegetarian"]'),
     ('Jane', '["Paleo"]');
 
+INSERT INTO diners (name, dietary_restrictions)
+VALUES
+    ('Alice', '{"vegan": true, "gluten_free": false}'),
+    ('Bob', '{"vegan": false, "gluten_free": true}'),
+    ('Charlie', '{"vegan": true, "gluten_free": true}');
+
+
 INSERT INTO restaurants (name, endorsements)
 VALUES
     ('Restaurant A', '["Vegan-friendly"]'),
@@ -53,4 +72,6 @@ VALUES
 INSERT INTO reservations (table_id, diner_ids, reservation_time, end_time)
 VALUES
     (1, ARRAY[1, 2], '2024-08-01 19:00:00', '2024-08-01 21:00:00');
+
+Select * From diners;
 
