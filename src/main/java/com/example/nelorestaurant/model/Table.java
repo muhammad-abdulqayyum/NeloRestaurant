@@ -2,24 +2,24 @@ package com.example.nelorestaurant.model;
 
 public class Table {
 
-    private int id;
-    private int capacity;
+    private int tableId;
+    private int tableCapacity;
     private Restaurant restaurant;
 
-    public int getId() {
-        return id;
+    public int getTableId() {
+        return tableId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
     }
 
-    public int getCapacity() {
-        return capacity;
+    public int getTableCapacity() {
+        return tableCapacity;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+    public void setTableCapacity(int tableCapacity) {
+        this.tableCapacity = tableCapacity;
     }
 
     public Restaurant getRestaurant() {

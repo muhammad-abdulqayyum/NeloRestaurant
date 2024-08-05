@@ -5,26 +5,37 @@ import java.util.Set;
 
 public class Diner {
 
-    private int id;
-    private String name;
+    private int dinerId;
+    private String dinerName;
     private Set<String> dietaryRestrictions = new HashSet<>();
+
+    public Diner(int dinerId, String dinerName, Set<String> dietaryRestrictions) {
+        this.dinerId = dinerId;
+        this.dinerName = dinerName;
+        this.dietaryRestrictions = dietaryRestrictions;
+    }
+
+    public Diner(int dinerId, String dinerName) {
+        this.dinerId = dinerId;
+        this.dinerName = dinerName;
+    }
 
     // Getters and Setters
 
-    public int getId() {
-        return id;
+    public int getDinerId() {
+        return dinerId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDinerId(int dinerId) {
+        this.dinerId = dinerId;
     }
 
-    public String getName() {
-        return name;
+    public String getDinerName() {
+        return dinerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDinerName(String dinerName) {
+        this.dinerName = dinerName;
     }
 
     public Set<String> getDietaryRestrictions() {
