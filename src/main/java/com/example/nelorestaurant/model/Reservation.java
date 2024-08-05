@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class Reservation {
 
-    private int id;
+    private int reservationId;
 
     private Table table;
 
@@ -14,12 +14,12 @@ public class Reservation {
 
     private LocalDateTime time;
 
-    public int getId() {
-        return id;
+    public int getReservationId() {
+        return reservationId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setReservationId(int reservationId) {
+        this.reservationId = reservationId;
     }
 
     public Table getTable() {
