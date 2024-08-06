@@ -54,15 +54,15 @@ VALUES
 
 INSERT INTO diners (name, dietary_restrictions)
 VALUES
-    ('Alice', '{"vegan": true, "gluten_free": false}'),
-    ('Bob', '{"vegan": false, "gluten_free": true}'),
-    ('Charlie', '{"vegan": true, "gluten_free": true}');
+    ('Alice', '["Vegan"]'),
+    ('Bob', '["Vegan"]'),
+    ('Charlie', '["Vegan"]');
 
 
 INSERT INTO restaurants (name, endorsements)
 VALUES
-    ('Restaurant A', '["Vegan-friendly"]'),
-    ('Restaurant B', '["Vegetarian-friendly"]');
+    ('Restaurant A', '["Vegan"]'),
+    ('Restaurant B', '["Vegetarian"]');
 
 INSERT INTO tables (restaurant_id, capacity)
 VALUES
