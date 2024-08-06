@@ -1,12 +1,15 @@
 package com.example.nelorestaurant.service;
 
 import com.example.nelorestaurant.dao.NeloRepository;
+import com.example.nelorestaurant.dto.ReservationDTO;
+import com.example.nelorestaurant.model.Diner;
 import com.example.nelorestaurant.model.Reservation;
 import com.example.nelorestaurant.model.Restaurant;
 import com.example.nelorestaurant.model.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -147,8 +150,32 @@ public class NeloService {
     }
 
 
-    public Reservation createReservation(int groupSize, LocalDateTime requestTime, List<String> dietaryRestrictions) {
+    public ReservationDTO createReservation(Set<Diner> guestInfo, int tableId, int restaurantId, LocalDateTime reservationRequestTime) throws SQLException {
 
-        return null;
+        LocalDateTime reservationTime = reservationRequestTime;
+        LocalDateTime endTime = reservationRequestTime.plusHours(2);
+
+        boolean isAvailable = repository.isReservationTimeValid(tableId, reservationTime, endTime);
+
+        Set<Integer> dinerIds = new HashSet<>();
+
+        for (Diner diner : guestInfo) {
+            dinerIds.add(diner.getDinerId());
+        }
+
+        if (isAvailable) {
+            ReservationDTO reservation = new ReservationDTO();
+            reservation.setTableId(tableId);
+            reservation.setReservationId(restaurantId);
+            reservation.setDinerIds(dinerIds);
+            reservation.setReservationTime(reservationTime);
+            reservation.setEndTime(endTime);
+
+            repository.saveReservation(reservation);
+            return reservation;
+        } else {
+            return null; // Time slot is not available
+        }
+
     }
 }

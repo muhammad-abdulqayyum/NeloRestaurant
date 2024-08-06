@@ -1,5 +1,6 @@
 package com.example.nelorestaurant.controller;
 
+import com.example.nelorestaurant.dto.ReservationDTO;
 import com.example.nelorestaurant.model.Diner;
 import com.example.nelorestaurant.model.Reservation;
 import com.example.nelorestaurant.model.Table;
@@ -9,6 +10,7 @@ import com.example.nelorestaurant.service.NeloService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,12 +71,31 @@ public class NeloController {
             List<Table> availableTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
 
             if(availableTables != null && !availableTables.isEmpty()){
-                //TODO: Now, create Reservation
-                // include: tableId, restaurantId, requestTime
 
-                Reservation reservation = neloService.createReservation(groupSize, requestTime, dietaryRestrictions);
+                ReservationDTO reservationDTO = neloService
+                        .createReservation(guestInfo, tableId, restaurantId, requestTime);
 
-                return ResponseEntity.ok(reservation);
+
+                if(reservationDTO != null){
+
+                    Reservation reservation  = new Reservation();
+                    reservation.setReservationId(reservationDTO.getReservationId());
+                    reservation.setReservationTime(reservationDTO.getReservationTime());
+                    reservation.setEndTime(reservationDTO.getEndTime());
+                    reservation.setDiners(request.getDinerInfo());
+
+                    for(Table table : availableTables){
+                        if(table.getTableId() == tableId){
+                            reservation.setTable(table);
+                            break;
+                        }
+                    }
+
+                    return ResponseEntity.ok(reservation);
+                } else {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                }
+
 
             } else {
                 return ResponseEntity.notFound().build();
