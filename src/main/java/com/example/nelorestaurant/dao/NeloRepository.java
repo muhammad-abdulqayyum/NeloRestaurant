@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class NeloRepository {
@@ -106,13 +105,17 @@ public class NeloRepository {
                 RESERVATION_ROW_MAPPER);
 
         List<Reservation> reservations = new ArrayList<>();
+        Map<Integer, Set<Integer>> dinerMap = new HashMap();
 
         for (ReservationDTO reservationDTO : reservationDtos) {
 
             Reservation reservation = new Reservation();
+
             Table table = new Table();
             table.setTableId(reservationDTO.getTableId());
             reservation.setTable(table);
+
+            dinerMap.put(reservationDTO.getReservationId(), reservationDTO.getDinerIds());
 
             reservation.setReservationId(reservationDTO.getReservationId());
             reservation.setReservationTime(reservationDTO.getReservationTime());
@@ -121,10 +124,22 @@ public class NeloRepository {
             reservations.add(reservation);
         }
 
+        //Initialize Diners for Reservation
+        for (Reservation reservation: reservations) {
+            Set<Integer> dinerIds = dinerMap.get(reservation.getReservationId());
+            Set<Diner> diners = new HashSet<>();
+            for (Integer dinerId: dinerIds) {
+                Diner diner = new Diner();
+                diner.setDinerId(dinerId);
+                diners.add(diner);
+            }
+            reservation.setDiners(diners);
+        }
+
         return reservations;
     }
 
-    public List<Table> getOpenTablesFromDB(int groupSize, LocalDateTime time){
+    public List<Table> getTablesByCapacityFromDB(int groupSize, LocalDateTime time){
         List<TableDTO> openTableFromDB = jdbcTemplate.query(GET_OPEN_TABLES, new Object[]{groupSize}, TABLE_ROW_MAPPER);
 
         List<Table> openTables = new ArrayList<>();
