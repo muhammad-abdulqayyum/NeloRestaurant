@@ -1,9 +1,10 @@
 package com.example.nelorestaurant.controller;
 
+import com.example.nelorestaurant.model.Diner;
 import com.example.nelorestaurant.model.Reservation;
-import com.example.nelorestaurant.model.Restaurant;
 import com.example.nelorestaurant.model.Table;
-import com.example.nelorestaurant.request.ReservationRequest;
+import com.example.nelorestaurant.request.CreateReservationRequest;
+import com.example.nelorestaurant.request.SearchReservationRequest;
 import com.example.nelorestaurant.service.NeloService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,18 +27,24 @@ public class NeloController {
     NeloService neloService;
 
     @PostMapping("/search")
-    public ResponseEntity<List<Table>> findAvailableRestaurantTables(@RequestBody ReservationRequest request){
+    public ResponseEntity<List<Table>> findAvailableRestaurantTables(@RequestBody SearchReservationRequest request){
 
         int groupSize = request.getGroupSize();
         LocalDateTime requestTime = request.getTime();
         List<String> dietaryRestrictions = request.getDietaryRestrictions();
 
-
         try{
-            List<Table> matchingTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
+            //Todo: need to add logic to ensure tables are open for given time
+            //Todo: can do this by getting reservations where time is valid.
+            // Then loading all table ids for those reservations in set
+            // then, checking if each available table is within set. If it is not, remove from available tables.
+            // quick fix for now but room for optimization in future by making more defined sql queries, accross the board.
+            // working towards MVP now, minimum viable product. Just Do It
 
-            if(matchingTables != null && !matchingTables.isEmpty()){
-                return ResponseEntity.ok(matchingTables);
+            List<Table> availableTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
+
+            if(availableTables != null && !availableTables.isEmpty()){
+                return ResponseEntity.ok(availableTables);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -47,13 +52,34 @@ public class NeloController {
             return ResponseEntity.badRequest().build();
         }
 
-
     }
 
     @PostMapping("/createReservation")
-    public ResponseEntity<Reservation> createReservation(){
+    public ResponseEntity<Reservation> createReservation(@RequestBody CreateReservationRequest request){
 
-        return ResponseEntity.ok(null);
+        int groupSize = request.getDinerIds().size();
+        int tableId = request.getTableId();
+        int restaurantId = request.getRestaurantId();
+        LocalDateTime requestTime = request.getReservationTime();
+        List<String> dietaryRestrictions = request.getDietaryRestrictions();
+        Set<Integer> dinerIds = request.getDinerIds();
+
+        try{
+            List<Table> availableTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
+
+            if(availableTables != null && !availableTables.isEmpty()){
+                //TODO: Now, create Reservation
+
+                Reservation reservation = neloService.createReservation(groupSize, requestTime, dietaryRestrictions);
+
+                return ResponseEntity.ok(reservation);
+
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/deleteReservation/{reservationId}")

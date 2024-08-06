@@ -1,4 +1,4 @@
-package com.example.nelorestaurant.model;
+package com.example.nelorestaurant.dto;
 
 public class TableDTO {
 

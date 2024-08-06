@@ -1,21 +1,22 @@
-package com.example.nelorestaurant.model;
+package com.example.nelorestaurant.dto;
+
+import com.example.nelorestaurant.model.Diner;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Reservation {
+public class ReservationDTO {
 
     private int reservationId;
 
-    private Table table;
+    private int tableId;
 
-    private Set<Diner> diners = new HashSet<>();
+    private Set<Integer> dinerIds = new HashSet<>();
 
     private LocalDateTime reservationTime;
 
     private LocalDateTime endTime;
-
 
     public int getReservationId() {
         return reservationId;
@@ -25,20 +26,20 @@ public class Reservation {
         this.reservationId = reservationId;
     }
 
-    public Table getTable() {
-        return table;
+    public int getTableId() {
+        return tableId;
     }
 
-    public void setTable(Table table) {
-        this.table = table;
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
     }
 
-    public Set<Diner> getDiners() {
-        return diners;
+    public Set<Integer> getDinerIds() {
+        return dinerIds;
     }
 
-    public void setDiners(Set<Diner> diners) {
-        this.diners = diners;
+    public void setDinerIds(Set<Integer> dinerIds) {
+        this.dinerIds = dinerIds;
     }
 
     public LocalDateTime getReservationTime() {
@@ -56,4 +57,5 @@ public class Reservation {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
 }

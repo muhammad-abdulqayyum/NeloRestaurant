@@ -2,7 +2,7 @@ package com.example.nelorestaurant.controller;
 
 import com.example.nelorestaurant.model.Restaurant;
 import com.example.nelorestaurant.model.Table;
-import com.example.nelorestaurant.request.ReservationRequest;
+import com.example.nelorestaurant.request.SearchReservationRequest;
 import com.example.nelorestaurant.service.NeloService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,7 +30,7 @@ public class NeloControllerTest {
 
     @Test
     public void testFindAvailableRestaurantTablesSuccess() {
-        ReservationRequest request = new ReservationRequest(1);
+        SearchReservationRequest request = new SearchReservationRequest(1);
 
         List<Table> tables = new ArrayList<>();
         Table table = new Table();
@@ -51,7 +51,7 @@ public class NeloControllerTest {
 
     @Test
     public void testFindAvailableRestaurantTablesNotFound() {
-        ReservationRequest request = new ReservationRequest(1);
+        SearchReservationRequest request = new SearchReservationRequest(1);
 
         when(reservationService.getMatchingTables(
                 request.getGroupSize(),
