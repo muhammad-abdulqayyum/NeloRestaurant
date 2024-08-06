@@ -33,13 +33,7 @@ public class NeloController {
         List<String> dietaryRestrictions = request.getDietaryRestrictions();
 
         try{
-            //Todo: need to add logic to ensure tables are open for given time
-            //Todo: can do this by getting reservations where time is valid.
-            // Then loading all table ids for those reservations in set
-            // then, checking if each available table is within set. If it is not, remove from available tables.
-            // quick fix for now but room for optimization in future by making more defined sql queries, accross the board.
-            // working towards MVP now, minimum viable product. Just Do It
-
+            // Gets Available Tables by Group Size, RequestTime and Dietary Restrictions
             List<Table> availableTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);
 
             if(availableTables != null && !availableTables.isEmpty()){
@@ -56,14 +50,15 @@ public class NeloController {
     @PostMapping("/createReservation")
     public ResponseEntity<Reservation> createReservation(@RequestBody CreateReservationRequest request){
 
+        // request data for availableTables
         int groupSize = request.getDinerInfo().size();
+        LocalDateTime requestTime = request.getReservationTime();
+        List<String> dietaryRestrictions = request.getDietaryRestrictions();
+
+        // request data to createReservation
         int tableId = request.getTableId();
         int restaurantId = request.getRestaurantId();
-        LocalDateTime requestTime = request.getReservationTime();
-
         Set<Diner> guestInfo = request.getDinerInfo();
-
-        List<String> dietaryRestrictions = request.getDietaryRestrictions();
 
         //add restrictions for each unique guest
         for(Diner guest : guestInfo){
@@ -75,6 +70,7 @@ public class NeloController {
 
             if(availableTables != null && !availableTables.isEmpty()){
                 //TODO: Now, create Reservation
+                // include: tableId, restaurantId, requestTime
 
                 Reservation reservation = neloService.createReservation(groupSize, requestTime, dietaryRestrictions);
 

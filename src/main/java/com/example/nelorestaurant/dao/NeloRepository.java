@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class NeloRepository {
@@ -140,7 +139,7 @@ public class NeloRepository {
         return reservations;
     }
 
-    public List<Table> getOpenTablesFromDB(int groupSize, LocalDateTime time){
+    public List<Table> getTablesByCapacityFromDB(int groupSize, LocalDateTime time){
         List<TableDTO> openTableFromDB = jdbcTemplate.query(GET_OPEN_TABLES, new Object[]{groupSize}, TABLE_ROW_MAPPER);
 
         List<Table> openTables = new ArrayList<>();

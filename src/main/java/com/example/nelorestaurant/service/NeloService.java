@@ -17,7 +17,7 @@ public class NeloService {
     NeloRepository repository;
 
     /**
-     * Returns List of All Available Tables, based on available group size and dietaryRestrictions
+     * Returns List of All Available Tables, based on available group size, dietaryRestrictions and reservationTime
      *
      * @param groupSize
      * @param reservationRequestTime
@@ -62,9 +62,18 @@ public class NeloService {
         return openTables;
     }
 
+    /**
+     *
+     * Method gets all Tables that have capacity for groupSize and is available for specific request time
+     *
+     * @param groupSize
+     * @param time
+     * @return
+     */
     public List<Table> getOpenTables(int groupSize, LocalDateTime time) {
 
-        List<Table> openTables = repository.getOpenTablesFromDB(groupSize, time);
+        List<Table> tablesWithCapacity = repository.getTablesByCapacityFromDB(groupSize, time);
+        List<Table> openTables = new ArrayList<>();
 
         List<Restaurant> allRestaurants = getAllRestaurants();
         HashMap<Integer, Restaurant> restaurantMap = new HashMap<>();
@@ -76,11 +85,29 @@ public class NeloService {
         }
 
         //Fill in Restaurant Data
-        for(Table table : openTables){
+        for(Table table : tablesWithCapacity){
 
             int restaurantId = table.getRestaurant().getRestaurantId();
             Restaurant restaurant = restaurantMap.get(restaurantId);
             table.setRestaurant(restaurant);
+        }
+
+
+        LocalDateTime startTime = time;
+        LocalDateTime endTime = time.plusHours(2);
+
+        List<Reservation> reservations = repository.getAllReservationsForTime(startTime,endTime);
+        Set<Integer> unavailableTableIds = new HashSet<>();
+
+        for(Reservation reservation : reservations){
+            int bookedTableId = reservation.getTable().getTableId();
+            unavailableTableIds.add(bookedTableId);
+        }
+
+        for(Table table : tablesWithCapacity){
+            if(!unavailableTableIds.contains(table.getTableId())){
+                openTables.add(table);
+            }
         }
 
         return openTables;
