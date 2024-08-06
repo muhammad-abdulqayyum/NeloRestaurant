@@ -34,6 +34,12 @@ public class NeloRepository {
     public static final String GET_ALL_RESTAURANTS = "SELECT * FROM restaurants";
     public static final String DELETE_RESERVATION_VIA_ID = "DELETE FROM reservations WHERE id = ?";
 
+    private static final String CHECK_OVERLAPPING_RESERVATIONS
+            = "SELECT COUNT(*) FROM reservations WHERE table_id = ? AND reservation_time < ? AND end_time > ?";
+
+    private static final String SAVE_RESERVATION = "INSERT INTO reservations (table_id, diner_ids, reservation_time, end_time) VALUES (?, ?, ?, ?)";
+
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -96,6 +102,38 @@ public class NeloRepository {
     };
 
     //DAO Methods
+
+    // Method to check if a reservation time is valid
+    public boolean isReservationTimeValid(int tableId, LocalDateTime newStartTime, LocalDateTime newEndTime) {
+        int count = jdbcTemplate.queryForObject(
+                CHECK_OVERLAPPING_RESERVATIONS,
+                new Object[]{tableId, newEndTime, newStartTime},
+                Integer.class);
+
+        return count == 0; // Returns true if no overlapping reservations are found
+    }
+
+    public void saveReservation(ReservationDTO reservationDTO) throws SQLException {
+        try {
+            Array dinerIdsArray = jdbcTemplate
+                    .getDataSource()
+                    .getConnection()
+                    .createArrayOf("INTEGER", reservationDTO.getDinerIds().toArray());
+
+
+            jdbcTemplate.update(SAVE_RESERVATION,
+                    reservationDTO.getTableId(),
+                    dinerIdsArray,
+                    reservationDTO.getReservationTime(),
+                    reservationDTO.getEndTime());
+
+        } catch (SQLException e) {
+            log.error("Error saving reservation", e);
+            log.error(e.getMessage());
+            throw e;
+            // Handle the exception appropriately in production code
+        }
+    }
 
     public List<Reservation> getAllReservationsForTime(LocalDateTime startTime, LocalDateTime endTime) {
 
