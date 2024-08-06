@@ -1,6 +1,7 @@
 package com.example.nelorestaurant.service;
 
 import com.example.nelorestaurant.dao.NeloRepository;
+import com.example.nelorestaurant.model.Reservation;
 import com.example.nelorestaurant.model.Restaurant;
 import com.example.nelorestaurant.model.Table;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,14 @@ public class NeloService {
     @Autowired
     NeloRepository repository;
 
+    /**
+     * Returns List of All Available Tables, based on available group size and dietaryRestrictions
+     *
+     * @param groupSize
+     * @param reservationRequestTime
+     * @param dietaryRestrictions
+     * @return
+     */
     public List<Table> getMatchingTables(int groupSize,
                                          LocalDateTime reservationRequestTime,
                                          List<String> dietaryRestrictions){
@@ -111,4 +120,8 @@ public class NeloService {
     }
 
 
+    public Reservation createReservation(int groupSize, LocalDateTime requestTime, List<String> dietaryRestrictions) {
+
+        return null;
+    }
 }

@@ -6,10 +6,10 @@ spring:
 
   # Data source configuration for Oracle database
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:xe  # Example URL for Oracle database
-    username: your-username  # Replace with your database username
-    password: your-password  # Replace with your database password
-    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: your-username
+    password: password
+    driver-class-name: org.postgresql.Driver
 
   # JDBC settings
   jdbc:
@@ -17,12 +17,6 @@ spring:
   # For example:
   # initialize:
   #   mode: always
-
-  # JPA configuration (if you use JPA/Hibernate)
-  jpa:
-    hibernate:
-      ddl-auto: update  # Automatically create/update database schema
-    show-sql: true  # Show SQL queries in the console
 
   # Server settings
   server:

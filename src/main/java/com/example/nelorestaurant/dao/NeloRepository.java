@@ -1,8 +1,11 @@
 package com.example.nelorestaurant.dao;
 
+import com.example.nelorestaurant.dto.ReservationDTO;
+import com.example.nelorestaurant.model.Diner;
+import com.example.nelorestaurant.model.Reservation;
 import com.example.nelorestaurant.model.Restaurant;
 import com.example.nelorestaurant.model.Table;
-import com.example.nelorestaurant.model.TableDTO;
+import com.example.nelorestaurant.dto.TableDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +14,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class NeloRepository {
@@ -26,8 +29,9 @@ public class NeloRepository {
     private static final Logger log = LoggerFactory.getLogger(NeloRepository.class);
 
     //SQL Query Constants
-    public static final String GET_OPEN_TABLES = "SELECT * FROM tables capacity >= ?";
-
+    public static final String GET_ALL_RESERVATIONS_FOR_TIME
+            = "SELECT * FROM reservations WHERE reservation_time >= ? and end_time <= ?";//todo: use this to ensure time
+    public static final String GET_OPEN_TABLES = "SELECT * FROM tables WHERE capacity >= ?";
     public static final String GET_ALL_RESTAURANTS = "SELECT * FROM restaurants";
     public static final String DELETE_RESERVATION_VIA_ID = "DELETE FROM reservations WHERE id = ?";
 
@@ -35,6 +39,27 @@ public class NeloRepository {
     JdbcTemplate jdbcTemplate;
 
     //Row Mappers
+    private static final RowMapper<ReservationDTO> RESERVATION_ROW_MAPPER = new RowMapper<>() {
+
+        @Override
+        public ReservationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.setReservationId(rs.getInt("id"));
+            reservationDTO.setTableId(rs.getInt("table_id"));
+
+
+            Array dinerIdsArray = rs.getArray("diner_ids");
+            Integer[] dinerIds = (Integer[]) dinerIdsArray.getArray();
+            reservationDTO.setDinerIds(new HashSet<>(Arrays.asList(dinerIds)));
+
+            reservationDTO.setReservationTime(rs.getObject("reservation_time", LocalDateTime.class));
+            reservationDTO.setEndTime(rs.getObject("end_time", LocalDateTime.class));
+
+
+            return reservationDTO;
+        }
+    };
+
     private static final RowMapper<Restaurant> RESTAURANT_ROW_MAPPER = new RowMapper<>() {
         @Override
         public Restaurant mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -73,11 +98,36 @@ public class NeloRepository {
 
     //DAO Methods
 
+    public List<Reservation> getAllReservationsForTime(LocalDateTime startTime, LocalDateTime endTime) {
+
+        List<ReservationDTO> reservationDtos = jdbcTemplate.query(GET_ALL_RESERVATIONS_FOR_TIME,
+                new Object[]{startTime, endTime},
+                new int[]{Types.TIMESTAMP, Types.TIMESTAMP},
+                RESERVATION_ROW_MAPPER);
+
+        List<Reservation> reservations = new ArrayList<>();
+
+        for (ReservationDTO reservationDTO : reservationDtos) {
+
+            Reservation reservation = new Reservation();
+            Table table = new Table();
+            table.setTableId(reservationDTO.getTableId());
+            reservation.setTable(table);
+
+            reservation.setReservationId(reservationDTO.getReservationId());
+            reservation.setReservationTime(reservationDTO.getReservationTime());
+            reservation.setEndTime(reservationDTO.getEndTime());
+
+            reservations.add(reservation);
+        }
+
+        return reservations;
+    }
+
     public List<Table> getOpenTablesFromDB(int groupSize, LocalDateTime time){
-        List<TableDTO> openTableFromDB = jdbcTemplate.query(GET_OPEN_TABLES, TABLE_ROW_MAPPER);
+        List<TableDTO> openTableFromDB = jdbcTemplate.query(GET_OPEN_TABLES, new Object[]{groupSize}, TABLE_ROW_MAPPER);
 
         List<Table> openTables = new ArrayList<>();
-        //todo: set openTables with data from openTablesFromDB
 
         for(TableDTO tableDTO: openTableFromDB){
             Table table = new Table();
@@ -88,6 +138,8 @@ public class NeloRepository {
             restaurant.setRestaurantId(tableDTO.getRestaurantId());
 
             table.setRestaurant(restaurant);
+
+            openTables.add(table);
         }
 
         return openTables;
@@ -99,10 +151,7 @@ public class NeloRepository {
      * @return List of all Restaurants
      */
     public List<Restaurant> getAllRestaurants() {
-
-        List<Restaurant> restaurants = jdbcTemplate.query(GET_ALL_RESTAURANTS,RESTAURANT_ROW_MAPPER);
-
-        return restaurants;
+        return jdbcTemplate.query(GET_ALL_RESTAURANTS,RESTAURANT_ROW_MAPPER);
     }
 
     /**
@@ -121,7 +170,6 @@ public class NeloRepository {
             return true; //Return true if at least one row was deleted
         } else {
             return false; //query delete error. todo: send specified message for processing error or 404 not found.
-
         }
 
     }

@@ -9,6 +9,8 @@ public class Diner {
     private String dinerName;
     private Set<String> dietaryRestrictions = new HashSet<>();
 
+    public Diner(){}
+
     public Diner(int dinerId, String dinerName, Set<String> dietaryRestrictions) {
         this.dinerId = dinerId;
         this.dinerName = dinerName;

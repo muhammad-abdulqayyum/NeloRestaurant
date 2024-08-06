@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ReservationRequest {
+public class SearchReservationRequest {
 
     private int groupSize;
     private List<String> dietaryRestrictions;
@@ -18,7 +18,7 @@ public class ReservationRequest {
      * @param dietaryRestrictions
      * @param time
      */
-    public ReservationRequest(int groupSize, List<String> dietaryRestrictions, LocalDateTime time) {
+    public SearchReservationRequest(int groupSize, List<String> dietaryRestrictions, LocalDateTime time) {
         this.groupSize = groupSize;
         this.dietaryRestrictions = dietaryRestrictions;
         this.time = time;
@@ -30,7 +30,7 @@ public class ReservationRequest {
      * @param groupSize
      * @param dietaryRestrictions
      */
-    public ReservationRequest(int groupSize, List<String> dietaryRestrictions) {
+    public SearchReservationRequest(int groupSize, List<String> dietaryRestrictions) {
         this.groupSize = groupSize;
         this.dietaryRestrictions = dietaryRestrictions;
         this.time = LocalDateTime.now();
@@ -41,7 +41,7 @@ public class ReservationRequest {
      * @param groupSize
      * @param time
      */
-    public ReservationRequest(int groupSize, LocalDateTime time) {
+    public SearchReservationRequest(int groupSize, LocalDateTime time) {
         this.groupSize = groupSize;
         this.dietaryRestrictions = new ArrayList<>();
         this.time = time;
@@ -53,7 +53,7 @@ public class ReservationRequest {
      *
      * @param groupSize
      */
-    public ReservationRequest(int groupSize) {
+    public SearchReservationRequest(int groupSize) {
         this.groupSize = groupSize;
         this.dietaryRestrictions = new ArrayList<>();
         this.time = LocalDateTime.now();
@@ -63,7 +63,7 @@ public class ReservationRequest {
      * Default constuctor takes in no values. Sets groupSize to "1" by default,
      * with no dietaryRestrictions and present time for request
      */
-    public ReservationRequest() {
+    public SearchReservationRequest() {
         this.groupSize = 1;
         this.dietaryRestrictions = new ArrayList<>();
         this.time = LocalDateTime.now();
