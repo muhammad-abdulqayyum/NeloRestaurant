@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -57,12 +56,19 @@ public class NeloController {
     @PostMapping("/createReservation")
     public ResponseEntity<Reservation> createReservation(@RequestBody CreateReservationRequest request){
 
-        int groupSize = request.getDinerIds().size();
+        int groupSize = request.getDinerInfo().size();
         int tableId = request.getTableId();
         int restaurantId = request.getRestaurantId();
         LocalDateTime requestTime = request.getReservationTime();
+
+        Set<Diner> guestInfo = request.getDinerInfo();
+
         List<String> dietaryRestrictions = request.getDietaryRestrictions();
-        Set<Integer> dinerIds = request.getDinerIds();
+
+        //add restrictions for each unique guest
+        for(Diner guest : guestInfo){
+            dietaryRestrictions.addAll(guest.getDietaryRestrictions());
+        }
 
         try{
             List<Table> availableTables = neloService.getMatchingTables(groupSize, requestTime, dietaryRestrictions);

@@ -1,5 +1,7 @@
 package com.example.nelorestaurant.request;
 
+import com.example.nelorestaurant.model.Diner;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +10,7 @@ public class CreateReservationRequest {
 
     private int restaurantId;
     private int tableId;
-    private Set<Integer> dinerIds;
+    private Set<Diner> dinerInfo;
     private LocalDateTime reservationTime;
     private List<String> dietaryRestrictions;
 
@@ -29,12 +31,12 @@ public class CreateReservationRequest {
         this.tableId = tableId;
     }
 
-    public Set<Integer> getDinerIds() {
-        return dinerIds;
+    public Set<Diner> getDinerInfo() {
+        return dinerInfo;
     }
 
-    public void setDinerIds(Set<Integer> dinerIds) {
-        this.dinerIds = dinerIds;
+    public void setDinerInfo(Set<Diner> dinerInfo) {
+        this.dinerInfo = dinerInfo;
     }
 
     public LocalDateTime getReservationTime() {

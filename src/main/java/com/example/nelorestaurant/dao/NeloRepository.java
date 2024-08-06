@@ -106,19 +106,35 @@ public class NeloRepository {
                 RESERVATION_ROW_MAPPER);
 
         List<Reservation> reservations = new ArrayList<>();
+        Map<Integer, Set<Integer>> dinerMap = new HashMap();
 
         for (ReservationDTO reservationDTO : reservationDtos) {
 
             Reservation reservation = new Reservation();
+
             Table table = new Table();
             table.setTableId(reservationDTO.getTableId());
             reservation.setTable(table);
+
+            dinerMap.put(reservationDTO.getReservationId(), reservationDTO.getDinerIds());
 
             reservation.setReservationId(reservationDTO.getReservationId());
             reservation.setReservationTime(reservationDTO.getReservationTime());
             reservation.setEndTime(reservationDTO.getEndTime());
 
             reservations.add(reservation);
+        }
+
+        //Initialize Diners for Reservation
+        for (Reservation reservation: reservations) {
+            Set<Integer> dinerIds = dinerMap.get(reservation.getReservationId());
+            Set<Diner> diners = new HashSet<>();
+            for (Integer dinerId: dinerIds) {
+                Diner diner = new Diner();
+                diner.setDinerId(dinerId);
+                diners.add(diner);
+            }
+            reservation.setDiners(diners);
         }
 
         return reservations;
